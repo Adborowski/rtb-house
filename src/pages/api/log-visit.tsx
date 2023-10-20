@@ -1,13 +1,9 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
 // @ts-ignore
 import clientPromise from "@/util/mongo";
-
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@rtb-house.sqarbue.mongodb.net/?retryWrites=true&w=majority`;
-
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
-    name: string;
+    message: string;
 };
 
 export default async function handler(
@@ -24,11 +20,13 @@ export default async function handler(
 
         if (body.userId) {
             const db = client.db("rtb-house");
-            let newVisit = await db.collection("visits").insertOne(body);
-            res.status(200).json({ name: "OK" });
+            await db.collection("visits").insertOne(body);
+            res.status(200).json({ message: "Visit logged." });
+        } else {
+            res.status(404).json({ message: "userId not found." });
         }
     } catch (e) {
-        res.status(500).json({ name: "Could not connect to DB." });
+        res.status(500).json({ message: "Could not connect to DB." });
         return;
     }
 }

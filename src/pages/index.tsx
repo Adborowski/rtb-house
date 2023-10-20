@@ -15,7 +15,7 @@ export default function Home() {
 
     //  once you have userData, log it to db as a regular visit
     useEffect(() => {
-        if (userData) {
+        if (userData && userData.uid) {
             // send only unique user id
             const payload = { userId: userData.uid };
             fetch("/api/log-visit", {
