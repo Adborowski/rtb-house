@@ -16,7 +16,7 @@ export default async function handler(
         client = await clientPromise;
         const body = JSON.parse(req.body);
 
-        console.log(body.userId);
+        console.log("Logging visit for", body.userId);
 
         if (body.userId) {
             const db = client.db("rtb-house");

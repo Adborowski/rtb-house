@@ -13,8 +13,6 @@ export default function Home() {
     const [hasLoggedAvatarScroll, setHasLoggedAvatarScroll] =
         useState<any>(false); // keep this state to avoid duplicate logging of avatar scroll
 
-    // DATA HANDLERS
-
     // call an API and get an object with random user data
     const getUserData = () => {
         fetch("https://random-data-api.com/api/v2/users")
@@ -22,22 +20,34 @@ export default function Home() {
             .then((data) => {
                 console.log(data);
                 setUserData(data);
+                sessionStorage.setItem("userId", data.uid);
             });
     };
 
     //  fetch random user data on page load (async)
     useEffect(() => {
         getUserData();
+        console.log("Session storage ID", sessionStorage.getItem("userId"));
     }, []);
 
     //  once you have userData, log it to db as a regular visit
     useEffect(() => {
-        if (userData && userData.uid) {
+        if (userData && userData.uid && !sessionStorage.getItem("userId")) {
             const payload = { userId: userData.uid }; // send only the unique userId for speed
             fetch("/api/log-visit", {
                 method: "POST",
                 body: JSON.stringify(payload),
-            });
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data && data.uid) {
+                        console.log(
+                            "%cSaved user id to sessionStorage.",
+                            "color: orange",
+                            sessionStorage.getItem("userId")
+                        );
+                    }
+                });
         }
     }, [userData]);
 
@@ -62,6 +72,7 @@ export default function Home() {
         }
     };
 
+    // react-library for intersection-observer boilerplate code
     const { ref, inView, entry } = useInView();
 
     useEffect(() => {
@@ -120,11 +131,11 @@ export default function Home() {
             {userData && (
                 <article>
                     <Image
-                        ref={ref}
+                        ref={ref} // for intersection observer lib
                         src={userData.avatar}
                         width={150}
                         height={150}
-                        alt="Picture of the author"
+                        alt="user avatar"
                     />
                 </article>
             )}

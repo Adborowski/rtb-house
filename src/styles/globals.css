@@ -57,3 +57,20 @@ button a {
     text-decoration: none;
     color: black;
 }
+
+/* REPORT */
+main {
+    max-width: 150px;
+    margin-top: 12px;
+}
+
+main section {
+}
+
+main figure {
+    font-size: 2rem;
+    margin-top: 6px;
+}
+
+main span {
+}

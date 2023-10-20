@@ -5,6 +5,8 @@ import clientPromise from "@/util/mongo";
 
 type Data = {
     message: string;
+    visits?: any;
+    avatarScrolls?: any;
 };
 
 export default async function handler(
@@ -15,16 +17,18 @@ export default async function handler(
 
     try {
         client = await clientPromise;
-        const body = JSON.parse(req.body);
-        console.log("logging avatar scroll for", body.userId);
-
-        if (body.userId) {
-            const db = client.db("rtb-house");
-            await db.collection("avatar-scrolls").insertOne(body);
-            res.status(200).json({ message: "Avatar scroll logged." });
-        } else {
-            res.status(404).json({ message: "userId not found." });
-        }
+        console.log("Getting visits...");
+        const db = client.db("rtb-house");
+        const visitsData = await db.collection("visits").find({}).toArray();
+        const avatarScrollsData = await db
+            .collection("avatar-scrolls")
+            .find({})
+            .toArray();
+        res.status(200).json({
+            message: "Visits received.",
+            visits: visitsData,
+            avatarScrolls: avatarScrollsData,
+        });
     } catch (e) {
         res.status(500).json({ message: "Could not connect to DB." });
         return;
