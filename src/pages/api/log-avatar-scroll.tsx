@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "@/util/mongo";
 
 type Data = {
-    name: string;
+    message: string;
 };
 
 export default async function handler(
@@ -15,10 +15,18 @@ export default async function handler(
 
     try {
         client = await clientPromise;
-        res.status(200).json({ name: "Connected via ClientPromise" });
+        const body = JSON.parse(req.body);
+        console.log("logging avatar scroll for", body.userId);
+
+        if (body.userId) {
+            const db = client.db("rtb-house");
+            await db.collection("visits").insertOne(body);
+            res.status(200).json({ message: "Avatar scroll logged." });
+        } else {
+            res.status(404).json({ message: "userId not found." });
+        }
     } catch (e) {
-        res.status(500).json({ name: "Could not connect to DB." });
+        res.status(500).json({ message: "Could not connect to DB." });
         return;
     }
-    res.status(200).json({ name: "John Doe" });
 }

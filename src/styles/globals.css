@@ -44,3 +44,16 @@ h2 {
 article img {
     border: 1px solid black;
 }
+
+button {
+    padding: 6px 12px;
+    margin-bottom: 6px;
+    background-color: lightgreen;
+    border: 0;
+    border-radius: 6px;
+}
+
+button a {
+    text-decoration: none;
+    color: black;
+}

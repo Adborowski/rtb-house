@@ -1,14 +1,31 @@
 import Head from "next/head";
 import Paragraph from "@/components/paragraph";
-import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import Link from "next/link";
 
 export default function Home() {
     const paragraphCount = 20; // how many paragraphs on page
     const lineCount = 20; // how many lines in a paragraph
     const userAvatarPosition = 10; // where to put the user avatar
     const [userData, setUserData] = useState<any>([]);
+    const [hasLoggedAvatarScroll, setHasLoggedAvatarScroll] =
+        useState<any>(false); // keep this state to avoid duplicate logging of avatar scroll
 
+    // DATA HANDLERS
+
+    // call an API and get an object with random user data
+    const getUserData = () => {
+        fetch("https://random-data-api.com/api/v2/users")
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+                setUserData(data);
+            });
+    };
+
+    //  fetch random user data on page load (async)
     useEffect(() => {
         getUserData();
     }, []);
@@ -16,14 +33,44 @@ export default function Home() {
     //  once you have userData, log it to db as a regular visit
     useEffect(() => {
         if (userData && userData.uid) {
-            // send only unique user id
-            const payload = { userId: userData.uid };
+            const payload = { userId: userData.uid }; // send only the unique userId for speed
             fetch("/api/log-visit", {
                 method: "POST",
                 body: JSON.stringify(payload),
             });
         }
     }, [userData]);
+
+    const logAvatarScroll = () => {
+        console.log("User reached avatar!", userData.uid);
+
+        if (userData && userData.uid && !hasLoggedAvatarScroll) {
+            const payload = { userId: userData.uid }; // send only the unique userId for speed
+            fetch("/api/log-avatar-scroll", {
+                method: "POST",
+                body: JSON.stringify(payload),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data);
+                    setHasLoggedAvatarScroll(true);
+                });
+        }
+
+        if (hasLoggedAvatarScroll) {
+            console.log("Avatar scroll had already been logged for this user.");
+        }
+    };
+
+    const { ref, inView, entry } = useInView();
+
+    useEffect(() => {
+        if (inView) {
+            logAvatarScroll();
+        }
+    }, [inView]);
+
+    // CREATE DUMMY CONTENT FOR THE PAGE
 
     // content will be an array of paragraphs
     // each paragraph is an array of strings (lines)
@@ -42,15 +89,6 @@ export default function Home() {
         content.push(createParagraph());
     }
 
-    const getUserData = () => {
-        fetch("https://random-data-api.com/api/v2/users")
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data);
-                setUserData(data);
-            });
-    };
-
     return (
         <>
             <Head>
@@ -68,6 +106,9 @@ export default function Home() {
                 if (index < userAvatarPosition) {
                     return (
                         <section key={index}>
+                            <button>
+                                <Link href="/report">Go to report</Link>
+                            </button>
                             <h2>{index + 1}</h2>
                             <Paragraph content={paragraph} />
                         </section>
@@ -79,6 +120,7 @@ export default function Home() {
             {userData && (
                 <article>
                     <Image
+                        ref={ref}
                         src={userData.avatar}
                         width={150}
                         height={150}
