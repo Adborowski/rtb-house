@@ -11,8 +11,19 @@ export default function Home() {
 
     useEffect(() => {
         getUserData();
-        fetch("/api/log-visit");
     }, []);
+
+    //  once you have userData, log it to db as a regular visit
+    useEffect(() => {
+        if (userData) {
+            // send only unique user id
+            const payload = { userId: userData.uid };
+            fetch("/api/log-visit", {
+                method: "POST",
+                body: JSON.stringify(payload),
+            });
+        }
+    }, [userData]);
 
     // content will be an array of paragraphs
     // each paragraph is an array of strings (lines)
