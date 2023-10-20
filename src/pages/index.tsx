@@ -21,6 +21,11 @@ export default function Home() {
                 console.log(data);
                 setUserData(data);
                 sessionStorage.setItem("userId", data.uid);
+                console.log(
+                    "%cSaved userId to sessionStorage",
+                    "color: pink",
+                    data.uid
+                );
             });
     };
 
@@ -32,7 +37,7 @@ export default function Home() {
 
     //  once you have userData, log it to db as a regular visit
     useEffect(() => {
-        if (userData && userData.uid && !sessionStorage.getItem("userId")) {
+        if (userData && userData.uid) {
             const payload = { userId: userData.uid }; // send only the unique userId for speed
             fetch("/api/log-visit", {
                 method: "POST",

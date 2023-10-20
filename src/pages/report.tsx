@@ -39,10 +39,10 @@ const Report = () => {
                     <span>% of users who reached avatar</span>
                     {avatarScrollsData && visitsData && (
                         <figure>
-                            {Math.floor(
+                            {(
                                 (avatarScrollsData.length / visitsData.length) *
-                                    100
-                            )}
+                                100
+                            ).toFixed(2)}
                             %
                         </figure>
                     )}
