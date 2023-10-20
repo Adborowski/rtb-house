@@ -11,6 +11,7 @@ export default function Home() {
 
     useEffect(() => {
         getUserData();
+        fetch("/api/log-visit");
     }, []);
 
     // content will be an array of paragraphs
