@@ -1,9 +1,17 @@
 import Head from "next/head";
 import Paragraph from "@/components/paragraph";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function Home() {
-    const paragraphCount = 20; // how many paragraphs
-    const lineCount = 20; // how many lines
+    const paragraphCount = 20; // how many paragraphs on page
+    const lineCount = 20; // how many lines in a paragraph
+    const userAvatarPosition = 10; // where to put the user avatar
+    const [userData, setUserData] = useState<any>([]);
+
+    useEffect(() => {
+        getUserData();
+    }, []);
 
     // content will be an array of paragraphs
     // each paragraph is an array of strings (lines)
@@ -22,7 +30,14 @@ export default function Home() {
         content.push(createParagraph());
     }
 
-    console.log(content);
+    const getUserData = () => {
+        fetch("https://random-data-api.com/api/v2/users")
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+                setUserData(data);
+            });
+    };
 
     return (
         <>
@@ -35,13 +50,41 @@ export default function Home() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+
+            {/* render first batch of paragraphs */}
             {content.map((paragraph, index) => {
-                return (
-                    <p>
-                        <h2>{index + 1}</h2>
-                        <Paragraph content={paragraph} />
-                    </p>
-                );
+                if (index < userAvatarPosition) {
+                    return (
+                        <section key={index}>
+                            <h2>{index + 1}</h2>
+                            <Paragraph content={paragraph} />
+                        </section>
+                    );
+                }
+            })}
+
+            {/* render user avatar */}
+            {userData && (
+                <article>
+                    <Image
+                        src={userData.avatar}
+                        width={150}
+                        height={150}
+                        alt="Picture of the author"
+                    />
+                </article>
+            )}
+
+            {/* render second batch of paragraphs */}
+            {content.map((paragraph, index) => {
+                if (index >= userAvatarPosition) {
+                    return (
+                        <section key={index}>
+                            <h2>{index + 1}</h2>
+                            <Paragraph content={paragraph} />
+                        </section>
+                    );
+                }
             })}
         </>
     );

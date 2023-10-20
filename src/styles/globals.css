@@ -23,7 +23,7 @@ aside {
     margin-right: 6px;
 }
 
-p {
+section {
     background-color: #f3f3f3;
     padding: 12px;
     padding-right: 24px; /* leave space for paragraph number */
@@ -39,4 +39,8 @@ h2 {
     font-size: 2rem;
     opacity: 0.2;
     margin-bottom: 12px;
+}
+
+article img {
+    border: 1px solid black;
 }

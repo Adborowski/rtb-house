@@ -1,11 +1,10 @@
 const Paragraph = (props: any) => {
     const { content } = props;
-    console.log(content);
     return (
         <>
             {content.map((line: string, index: number) => {
                 return (
-                    <span>
+                    <span key={index}>
                         <aside>{index + 1}</aside>
                         {line}
                     </span>
