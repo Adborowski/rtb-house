@@ -1,0 +1,42 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    /* define rem */
+    font-size: 14px;
+    font-family: "Helvetica";
+}
+
+body {
+    padding: 6px;
+}
+
+span {
+    display: block;
+}
+
+aside {
+    display: inline-block;
+    margin-right: 6px;
+}
+
+p {
+    background-color: #f3f3f3;
+    padding: 12px;
+    padding-right: 24px; /* leave space for paragraph number */
+    margin-bottom: 6px;
+    position: relative;
+}
+
+h2 {
+    display: block;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 2rem;
+    opacity: 0.2;
+    margin-bottom: 12px;
+}
